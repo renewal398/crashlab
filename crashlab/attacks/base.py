@@ -1,23 +1,27 @@
 import threading
-import time
+import logging
 
-class AttackBase:
-    def __init__(self, target, duration=60):
+logger = logging.getLogger(__name__)
+
+class AttackBase(threading.Thread):
+    def __init__(self, target, config_section=None):
+        super().__init__(daemon=True)
         self.target = target
-        self.duration = duration
-        self._running = False
-        self.threads = []
+        self._stop_event = threading.Event()
+        self.duration = config_section.get('duration', 60) if config_section else 60
 
-    def start(self):
-        self._running = True
-        print(f"[+] Starting {self.__class__.__name__} for {self.duration}s")
-        self._start_threads()
-        time.sleep(self.duration)
-        self.stop()
+    def launch(self):
+        """Start the attack thread and schedule automatic stop after `duration`."""
+        self.start()
+        # Schedule stop after duration
+        def stopper():
+            self._stop_event.wait(self.duration)
+            if not self._stop_event.is_set():
+                self.stop()
+        threading.Thread(target=stopper, daemon=True).start()
 
     def stop(self):
-        self._running = False
-        print(f"[-] Stopping {self.__class__.__name__}")
+        self._stop_event.set()
 
-    def _start_threads(self):
+    def run(self):
         raise NotImplementedError
