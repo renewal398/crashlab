@@ -1,7 +1,7 @@
-requests[socks]
-beautifulsoup4
-pyyaml
-dnspython
-aiohttp
-slowloris-fork      
-rich                
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+dnspython>=2.4.0
+aiohttp>=3.9.0
+rich>=13.0.0
+PyYAML>=6.0
